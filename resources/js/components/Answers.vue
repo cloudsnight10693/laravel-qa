@@ -9,7 +9,8 @@
                         <h2>{{ title }}</h2>
                     </div>
                     <hr>
-                    <answer v-for="answer in answers" :answer="answer" :key="answer.id"></answer>
+                    <!-- v-on komponen atau @ untuk me-Listen komponen dari child komponen. Dengan ini child dan parent komponen dapat saling mengirim data. -->
+                    <answer @deleted="remove(index)" v-for="(answer, index) in answers" :answer="answer" :key="answer.id"></answer>
 
                     <!-- v-if="nextUrl" untuk bilamana memiliki next url untuk direload maka akan muncul, selain itu tidak akan muncul -->
                     <div class="div text-center mt-3" v-if="nextUrl">
@@ -42,6 +43,13 @@
         },
 
         methods: {
+            remove(index){
+                /* argumen index menandakan posisi yang mana untuk menghapus item, argumen angka 1 merupakan berapa item yang ingin dihapus. Pada kasus ini adalah akan mengahpus satu item. */
+                this.answers.splice(index, 1);
+                /* decrement count property setiap delete */
+                this.count--;
+            },
+
             fetch(endpoint){
                 axios.get(endpoint)
                 // ({res} => {}) untuk mengambil data property ny saja

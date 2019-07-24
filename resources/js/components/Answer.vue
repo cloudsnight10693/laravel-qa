@@ -92,9 +92,9 @@
                         ['<button><b>YES</b></button>', (instance, toast) => {
                             axios.delete(this.endpoint)
                             .then(res => {
-                                $(this.$el).fadeOut(500, ()=> {
-                                    this.$toast.success(res.data.message, "Success", {timeout: 10000});
-                                })
+                                /* instance method $emit, untuk custom event. Yang mana custom event akan dipancarkan dari komponen child dan di-Listen oleh komponen parent.
+                                emitting event-nya dari child komponen ke parent komponen. */
+                                this.$emit('deleted');
                             });
                             instance.hide({ tansitionOut: 'fadeOut' }, toast, 'button');
                         }, true],
