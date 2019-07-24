@@ -5,7 +5,7 @@
             <i class="fas fa-check fa-2x"></i>
         </a>
 
-        <a v-if="accepted" style="color: rgb(95, 187, 126); cursor: pointer;" title="The owner accept this answer as best answer" :class="classes">
+        <a v-if="accepted" style="color: rgb(95, 187, 126); cursor: default;" title="The owner accept this answer as best answer" :class="classes">
             <i class="fas fa-check fa-2x"></i>
         </a>
     </div>
