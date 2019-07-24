@@ -10,6 +10,11 @@
                     </div>
                     <hr>
                     <answer v-for="answer in answers" :answer="answer" :key="answer.id"></answer>
+
+                    <!-- v-if="nextUrl" untuk bilamana memiliki next url untuk direload maka akan muncul, selain itu tidak akan muncul -->
+                    <div class="div text-center mt-3" v-if="nextUrl">
+                        <button @click.prevent="fetch(nextUrl)" class="btn btn-outline-secondary">Load More Answer</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -20,7 +25,35 @@
     import Answer from './Answer.vue';
 
     export default {
-        props: ['answers', 'count'],
+        props: ['question'],
+
+        data(){
+            return {
+                questionId: this.question.id,
+                count: this.question.answers_count,
+                answers: [],
+                nextUrl: null
+            }
+        },
+
+        // untuk mengetest endpoint dibawah ini
+        created(){
+            this.fetch(`/questions/${this.questionId}/answers`);
+        },
+
+        methods: {
+            fetch(endpoint){
+                axios.get(endpoint)
+                // ({res} => {}) untuk mengambil data property ny saja
+                .then(({data}) => {
+                    // ...data.data >>> fungsi triple dot untuk menggabungkan antara aray jadi satu array dari pada menjadi array dalam array
+                    this.answers.push(...data.data);
+
+                    // next_page_url merupakan sebuah fungsi bawaan yang mana untuk menunjukkan url selanjutnya
+                    this.nextUrl = data.next_page_url;
+                })
+            }
+        },
 
         computed: {
             title() {
