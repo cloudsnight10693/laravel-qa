@@ -40,15 +40,17 @@
 <script>
     import Vote from './Vote.vue';
     import UserInfo from './UserInfo.vue';
+    import encapsulation from '../mixins/encapsulation';
 
     export default {
         components: { Vote, UserInfo },
+
+        mixins: [encapsulation],
 
         props: ['answer'],
 
         data() {
             return {
-                editing: false,
                 body: this.answer.body,
                 bodyHtml: this.answer.body_html,
                 id: this.answer.id,
@@ -58,57 +60,25 @@
         },
 
         methods : {
-            edit() {
+            setEditCache() {
                 this.beforeEditCache = this.body;
-                this.editing = true;
             },
 
-            cancel() {
+            restoreFromCache() {
                 this.body = this.beforeEditCache;
-                this.editing = false;
             },
 
-            update() {
-                axios.patch(this.endpoint, {
+            payload() {
+                return {
                     body: this.body
-                })
-                .then(res => {
-                    this.editing = false;
-                    this.bodyHtml = res.data.body_html;
-                    this.$toast.success(res.data.message, "Success", {timeout: 10000});
-                })
-                .catch(err => {
-                    this.$toast.error(err.response.data.message, "Error", {timeout: 10000});
-                })
+                };
             },
 
-            destroy () {
-                // using izitoast
-                this.$toast.question("Are you sure want to delete this ?", "Confirm", {
-                    timeout: 20000,
-                    close: false,
-                    overlay: true,
-                    displayMode: 'once',
-                    id: 'question',
-                    zindex: 999,
-                    title: 'Hey',
-                    position: 'center',
-                    buttons: [
-                        ['<button><b>YES</b></button>', (instance, toast) => {
-                            axios.delete(this.endpoint)
-                            .then(res => {
-                                /* instance method $emit, untuk custom event. Yang mana custom event akan dipancarkan dari komponen child dan di-Listen oleh komponen parent.
-                                emitting event-nya dari child komponen ke parent komponen. */
-                                this.$emit('deleted');
-                            });
-                            instance.hide({ tansitionOut: 'fadeOut' }, toast, 'button');
-                        }, true],
-                        ['<button>NO</button>', function (instance, toast) {
-                
-                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-                
-                        }],
-                    ]
+            delete() {
+                axios.delete(this.endpoint)
+                .then(res => {
+                    this.$toast.success(res.data.message, "Success", { timeout: 2000 });
+                    this.$emit('deleted');
                 });
             }
         },
